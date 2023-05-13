@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using LegacyLoader.API.Attributes;
 using LegacyLoader.API.Loaders;
 using MonoMod.RuntimeDetour;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Core;
 
 namespace LegacyLoader.Internal;
 
@@ -34,6 +36,22 @@ internal static class ModReorganizer {
 
     public static void RegisterLoader(IModLoader loader) {
         loaders.Add(loader);
+    }
+
+    public static void LoadFromAssembly(Assembly assembly) {
+        var types = AssemblyManager.GetLoadableTypes(assembly);
+
+        foreach (var type in types) {
+            var attr = type.GetCustomAttribute<LoaderAttribute>();
+            if (attr is null)
+                continue;
+
+            if (!typeof(IModLoader).IsAssignableFrom(type))
+                continue;
+
+            var loader = (IModLoader) Activator.CreateInstance(type)!;
+            RegisterLoader(loader);
+        }
     }
 
     private static void Load(Action<CancellationToken> orig, CancellationToken token) {
