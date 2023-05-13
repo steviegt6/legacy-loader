@@ -1,8 +1,8 @@
 using JetBrains.Annotations;
 using LegacyLoader.Internal;
-using LegacyLoader.TAPI;
-using LegacyLoader.TConfig;
-using LegacyLoader.TModLoader;
+using LegacyLoader.Loaders.TAPI;
+using LegacyLoader.Loaders.TConfig;
+using LegacyLoader.Loaders.TModLoader;
 using Terraria.ModLoader;
 
 namespace LegacyLoader;

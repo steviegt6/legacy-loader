@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using LegacyLoader.API;
+using LegacyLoader.API.Loaders;
 using MonoMod.RuntimeDetour;
 using Terraria.ModLoader;
 
@@ -14,14 +14,14 @@ namespace LegacyLoader.Internal;
 /// </summary>
 internal static class ModReorganizer {
     private static Hook? loadHook;
-    private static List<LegacyVersionLoader> loaders = new();
+    private static List<IModLoader> loaders = new();
 
     public static void HookLoad() {
         loadHook = new Hook(
             typeof(ModContent).GetMethod("Load", BindingFlags.NonPublic | BindingFlags.Static)!,
             typeof(ModReorganizer).GetMethod(nameof(Load), BindingFlags.NonPublic | BindingFlags.Static)!
         );
-        loaders = new List<LegacyVersionLoader>();
+        loaders = new List<IModLoader>();
     }
 
     public static void UnhookLoad() {
@@ -32,7 +32,7 @@ internal static class ModReorganizer {
         loaders = null!;
     }
 
-    public static void RegisterLoader(LegacyVersionLoader loader) {
+    public static void RegisterLoader(IModLoader loader) {
         loaders.Add(loader);
     }
 
